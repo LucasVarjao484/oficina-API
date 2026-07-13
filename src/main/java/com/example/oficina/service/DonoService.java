@@ -1,7 +1,7 @@
 package com.example.oficina.service;
 
 import com.example.oficina.exception.CadastroDuplicadoException;
-import com.example.oficina.exception.DonoDesativadoException;
+import com.example.oficina.exception.RecursoDesativadoException;
 import com.example.oficina.model.Dono;
 import com.example.oficina.repository.DonoRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class DonoService {
     };
 
     public void editarDono(Dono dono){
-        validarAtivo(dono);
+        validarEdicao(dono);
         donoRepository.save(dono);
     };
 
@@ -58,9 +58,16 @@ public class DonoService {
         }
     }
 
-    public void validarAtivo(Dono dono){
+    public void validarEdicao(Dono dono){
         if(!dono.getAtivo()){
-            throw new DonoDesativadoException("Dono desativado !");
+            throw new RecursoDesativadoException("Dono desativado !");
+        }
+        Optional<Dono> donoOptional = donoRepository.findByCpf(dono.getCpf());
+        if(donoOptional.isPresent()){
+            Dono dono2 = donoOptional.get();
+            if(!dono2.getId().equals(dono.getId())){
+                throw new CadastroDuplicadoException("CPF já registrado !");
+            }
         }
     }
 }

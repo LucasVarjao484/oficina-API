@@ -63,7 +63,7 @@ public class DonoController {
         else {
             return ResponseEntity.notFound().build();
         }
-    };
+    }
 
     @Operation(summary = "Buscar donos", description = "Encontra donos de acordo com os parâmetros informados")
     @ApiResponses({
@@ -87,7 +87,7 @@ public class DonoController {
                 dono.getDataNascimento()
         ));
         return ResponseEntity.ok(resposta);
-    };
+    }
 
     @Operation(summary = "Criar dono", description = "Registra um novo dono")
     @ApiResponses({
@@ -106,13 +106,14 @@ public class DonoController {
                 .buildAndExpand(dono.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
-    };
+    }
 
     @Operation(summary = "Editar dono", description = "Edita um dono já existente")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Dono editado"),
             @ApiResponse(responseCode = "404", description = "Dono não encontrado !"),
             @ApiResponse(responseCode = "409", description = "Dono já desativado !"),
+            @ApiResponse(responseCode = "409", description = "CPF já registrado !"),
             @ApiResponse(responseCode = "422", description = "Erro de validação ! Verificar Campos incorretos"),
             @ApiResponse(responseCode = "400", description = "UUID inválido !")
     }
@@ -133,7 +134,7 @@ public class DonoController {
         else{
             return ResponseEntity.notFound().build();
         }
-    };
+    }
 
     @Operation(summary = "Desativar dono", description = "Desativa um dono")
     @ApiResponses({
@@ -154,7 +155,7 @@ public class DonoController {
         else {
             return ResponseEntity.notFound().build();
         }
-    };
+    }
 
     @Operation(summary = "Buscar veículos de um dono", description = "Busca os veículos de um dono, com opção de buscar veículos com parâmetros")
     @ApiResponses({
@@ -167,13 +168,14 @@ public class DonoController {
     public ResponseEntity<Object> veiculosDono(@PathVariable("id") String idDono,
                              @RequestParam(value = "marca", required = false) String marcaVeiculo,
                              @RequestParam(value = "modelo", required = false) String modeloVeiculo,
-                             @RequestParam(value = "ano", required = false) Integer anoVeiculo){
+                             @RequestParam(value = "ano", required = false) Integer anoVeiculo,
+                             @RequestParam(value = "placa", required = false) String placaVeiculo){
         var id = UUID.fromString(idDono);
         Optional<Dono> donoOptional = donoService.encontrarPorId(id);
         if(donoOptional.isPresent()){
             Dono dono = donoOptional.get();
             DonoDTO donoDTO = new DonoDTO(dono.getId(), dono.getNome(), dono.getCpf(), dono.getEndereco(), dono.getDataNascimento());
-            List<Veiculo> lista = veiculoService.veiculosPorDono(id, marcaVeiculo, modeloVeiculo, anoVeiculo);
+            List<Veiculo> lista = veiculoService.veiculosPorDono(id, marcaVeiculo, modeloVeiculo, anoVeiculo, placaVeiculo);
             List<ResponseVeiculoDTO> listaDTO = lista.stream().map(ResponseVeiculoDTO::new).toList();
             VeiculosDonoDTO resposta = new VeiculosDonoDTO(donoDTO.nomeDono(), donoDTO.cpf(), listaDTO);
             return ResponseEntity.ok(resposta);
@@ -181,7 +183,7 @@ public class DonoController {
         else{
             return ResponseEntity.notFound().build();
         }
-    };
+    }
 
     @Operation(summary = "Buscar atendimentos de um dono", description = "Busca os atendimentos de um dono, com opção de buscar atendimentos com parâmetros")
     @ApiResponses({
@@ -202,11 +204,12 @@ public class DonoController {
             DonoDTO donoDTO = new DonoDTO(dono.getId(), dono.getNome(), dono.getCpf(), dono.getEndereco(), dono.getDataNascimento());
             List<Atendimento> lista = atendimentoService.atendimentoPorDono(id, dataAtendimento, totalCentavos, status);
             List<ResponseAtendDTO> listaDTO = lista.stream().map(ResponseAtendDTO::new).toList();
-            AtendimentosDonoDTO resposta = new AtendimentosDonoDTO(dono.getNome(), dono.getCpf(), listaDTO);
+            AtendimentosDonoDTO resposta = new AtendimentosDonoDTO(donoDTO.nomeDono(), donoDTO.cpf(), listaDTO);
             return ResponseEntity.ok(resposta);
         }
         else {
             return ResponseEntity.notFound().build();
         }
-    };
+    }
+
 }

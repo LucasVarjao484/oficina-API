@@ -1,6 +1,7 @@
 package com.example.oficina.dto.dono;
 
 import com.example.oficina.model.Dono;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,7 @@ public record DonoDTO(
         @NotBlank
         @Size(max = 150)
         String enderecoDono,
+        @JsonFormat(pattern = "yyyy-MM-dd")
         @NotNull
         @Past
         LocalDate dataDeNascimentoDono

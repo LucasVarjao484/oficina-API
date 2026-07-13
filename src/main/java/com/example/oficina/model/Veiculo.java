@@ -31,4 +31,10 @@ public class Veiculo {
     @ManyToOne
     private Dono dono;
 
+    @Column(length = 10, nullable = false)
+    private String placa;
+
+    @Column
+    private Boolean ativo;
+
 }

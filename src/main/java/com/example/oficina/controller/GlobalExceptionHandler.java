@@ -1,7 +1,6 @@
 package com.example.oficina.controller;
 
 import com.example.oficina.exception.*;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,15 +22,15 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(DonoDesativadoException.class)
-    public ErroResposta handlerDonoDesativadoException(DonoDesativadoException e){
+    @ExceptionHandler(RecursoDesativadoException.class)
+    public ErroResposta handlerDonoDesativadoException(RecursoDesativadoException e){
         return ErroResposta.conflito(e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(AcaoNaoPermitidaException.class)
     public ErroResposta handlerAcaoNaoPermitidaException(AcaoNaoPermitidaException e){
-        return ErroResposta.respostaPadrao(e.getMessage());
+        return ErroResposta.conflito(e.getMessage());
     }
 
     @ExceptionHandler(CampoInvalidoException.class)
@@ -88,5 +86,15 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 "Requisição mal formada!",
                 List.of(erroCampo));
+    }
+
+    @ExceptionHandler(RecursoNaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErroResposta handlerDonoNotFoundException(RecursoNaoEncontradoException e){
+        return new ErroResposta(
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage(),
+                List.of()
+        );
     }
 }

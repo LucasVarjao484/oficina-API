@@ -8,14 +8,16 @@ public record ResponseVeiculoDTO(
         UUID id,
         String marcaVeiculo,
         String modeloVeiculo,
-        Integer anoVeiculo
+        Integer anoVeiculo,
+        String placaVeiculo
 ) {
     public ResponseVeiculoDTO (Veiculo veiculo){
         this(
                 veiculo.getId(),
                 veiculo.getMarca(),
                 veiculo.getModelo(),
-                veiculo.getAno()
+                veiculo.getAno(),
+                veiculo.getPlaca()
         );
     }
 }

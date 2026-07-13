@@ -24,4 +24,7 @@ public class Servico {
     @Column(name = "preco_padrao_centavos", nullable = false)
     private Integer precoCentavos;
 
+    @Column
+    private Boolean ativo;
+
 }
